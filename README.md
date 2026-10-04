@@ -6,7 +6,7 @@ Files in this folder:
 - gate.html: GATE 2027 syllabus map, materials and study plan
 - tracker.html: YOUR Hunter Log file (you must add it, see step 1)
 - tracker-syllabus-2027.js: updated syllabus for your tracker (optional, see step 1b)
-- manifest.webmanifest, sw.js, icons/: make it installable and offline-ready
+- manifest.webmanifest, sw.js, : make it installable and offline-ready
 
 ## Step 1: add the tracker
 Save the Hunter Log code you pasted as `tracker.html` in this folder, next to index.html.
@@ -29,3 +29,10 @@ Open that link in Chrome, tap the three-dot menu, choose "Install app" (or "Add 
 
 ## Updating later
 Edit the file on GitHub, then change `enviro-study-v2` to `v2` in sw.js so phones fetch the new version.
+
+## Sync across devices (Firebase)
+1. Create a free Firebase project, add a Web app, and copy its config into firebase-config.js.
+2. Enable Authentication, Email/Password.
+3. Create a Firestore database and paste firestore.rules into its Rules tab, then Publish.
+4. Upload the changed files to GitHub. Tap Sync in the app, create an account, sign in on each device.
+Sync is last-write-wins: the most recently changed device overwrites older data. Sign in first on the device that holds your main progress.

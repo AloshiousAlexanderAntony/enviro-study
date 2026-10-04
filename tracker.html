@@ -464,7 +464,6 @@ async function initApp(){
   populateSubjectSelect();
   document.getElementById("le-date").value = todayStr();
   document.getElementById("bq-date").value = todayStr();
-  render();
   dbNamespace = await getCloudDb();
   if(dbNamespace){
     dbNamespace.doc("hunter/state").onSnapshot(snap=>{

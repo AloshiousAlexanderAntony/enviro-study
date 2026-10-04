@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08141a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Enviro Study App</title>
+<style>
+html,body{height:100%;margin:0;background:#08141a;color:#d8e8ec;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.views{flex:1;position:relative;min-height:0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#08141a;display:none}
+iframe.on{display:block}
+nav{display:flex;border-top:1px solid #1e3844;background:#0e1f27;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;border:0;color:#86a2ab;padding:14px 8px;font:600 .95rem system-ui,sans-serif;cursor:pointer}
+nav button.on{color:#4cc9f0;box-shadow:inset 0 2px 0 #4cc9f0}
+nav button:focus-visible{outline:2px solid #4cc9f0;outline-offset:-4px}
+#bar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#0e1f27;border-bottom:1px solid #1e3844;padding:6px 12px;font-size:.85rem;color:#86a2ab}#bar[hidden]{display:none}#bar button{background:#4cc9f0;color:#06222c;border:0;border-radius:6px;padding:5px 12px;font-weight:600;cursor:pointer}#bar button[hidden]{display:none}
+</style>
+</head>
+<body>
+<div id="bar" hidden><span id="msg"></span><button id="inst" hidden>Install app</button></div>
+<div class="views">
+  <iframe id="notes" class="on" src="board.html" title="Study notes"></iframe>
+  <iframe id="tracker" title="GATE tracker"></iframe>
+  <iframe id="gate" title="GATE 2027 guide"></iframe>
+</div>
+<nav>
+  <button data-t="notes" class="on">Notes</button>
+  <button data-t="tracker">Tracker</button>
+  <button data-t="gate">GATE 2027</button>
+</nav>
+<script>
+const nav=document.querySelector('nav');
+function show(t){
+  document.querySelectorAll('iframe').forEach(f=>f.classList.toggle('on',f.id===t));
+  nav.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  const f=document.getElementById(t);
+  const u={tracker:'tracker.html',gate:'gate.html'}[t];if(u&&!f.getAttribute('src'))f.src=u;
+  try{localStorage.setItem('shell-tab',t)}catch(e){}
+}
+nav.addEventListener('click',e=>{const t=e.target.dataset.t;if(t)show(t)});
+let last='notes';try{last=localStorage.getItem('shell-tab')||'notes'}catch(e){}
+show(last);
+const bar=document.getElementById('bar'),msg=document.getElementById('msg'),inst=document.getElementById('inst');let dp=null;
+function sync(){const off=!navigator.onLine;msg.textContent=off?'Offline. Your data is saved on this device.':(dp?'Install this app for quick access.':'');inst.hidden=!dp;bar.hidden=!(off||dp)}
+addEventListener('online',sync);addEventListener('offline',sync);
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;sync()});
+inst.addEventListener('click',async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;sync()});
+addEventListener('appinstalled',()=>{dp=null;sync()});sync();
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>

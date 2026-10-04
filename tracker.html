@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>[SYSTEM] GATE ES 2027 — Hunter Log</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
+
+  :root{
+    --void:#05070D; --panel:#0B1020; --panel2:#0E1428; --border:#1E3A5F;
+    --glow:#3FA9F5; --glow-soft:rgba(63,169,245,0.18); --purple:#8B6CF5;
+    --text:#DCE8F7; --muted:#5F7690; --done:#38E6B4;
+    --weak:#FF6B4A; --weak-soft:rgba(255,107,74,0.15);
+    --sq:#FFB020; --sq-soft:rgba(255,176,32,0.2);
+  }
+  *{box-sizing:border-box;}
+  :root{ padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+  body{
+    margin:0; background:var(--void); color:var(--text); font-family:'Rajdhani',sans-serif;
+    background-image:radial-gradient(circle at 20% 0%, rgba(63,169,245,0.07), transparent 45%),
+      radial-gradient(circle at 90% 30%, rgba(139,108,245,0.06), transparent 40%), linear-gradient(var(--void),var(--void));
+    min-height:100vh;
+  }
+  .mono{ font-family:'Share Tech Mono',monospace; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:30px 18px 60px; }
+  header{ margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:16px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap; }
+  header .tag{ font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--glow); letter-spacing:2px; }
+  header h1{ font-size:1.9rem; font-weight:700; margin:4px 0 2px; color:#fff; text-shadow:0 0 14px var(--glow-soft); }
+  header p{ color:var(--muted); font-size:0.88rem; margin:0; }
+  .header-btns{ display:flex; gap:8px; }
+  #sq-trigger-btn, #settings-btn{
+    background:linear-gradient(180deg,#2A1A05,#1A1002); border:1px solid var(--sq); color:var(--sq);
+    font-family:'Share Tech Mono',monospace; font-size:0.78rem; letter-spacing:1px; padding:10px 14px;
+    cursor:pointer; clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px); white-space:nowrap;
+  }
+  #sq-trigger-btn{ animation:sqPulse 2.6s ease-in-out infinite; }
+  #settings-btn{ background:linear-gradient(180deg,#0E1428,#0B1020); border-color:var(--border); color:var(--muted); padding:10px 12px; }
+  @keyframes sqPulse{ 0%,100%{ box-shadow:0 0 6px var(--sq-soft); } 50%{ box-shadow:0 0 16px var(--sq-soft); } }
+
+  nav{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
+  nav button{
+    flex:1; min-width:120px; background:var(--panel); border:1px solid var(--border); color:var(--muted);
+    padding:11px 10px; font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.9rem;
+    letter-spacing:1px; cursor:pointer; clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);
+  }
+  nav button.active{ color:#fff; border-color:var(--glow); box-shadow:0 0 12px var(--glow-soft) inset, 0 0 8px var(--glow-soft); }
+
+  .warn-banner{ background:rgba(255,176,32,0.1); border:1px solid var(--sq); color:var(--sq); padding:10px 14px; font-size:0.85rem; margin-bottom:16px; font-family:'Share Tech Mono',monospace; }
+
+  .panel{
+    background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--border); padding:20px; margin-bottom:16px;
+    clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px); position:relative; overflow:hidden;
+  }
+  .panel::before{ content:""; position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(90deg,var(--glow),transparent 70%); opacity:0.8; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:720px){ .grid2{ grid-template-columns:1fr; } }
+
+  .stat-row{ display:flex; gap:26px; flex-wrap:wrap; }
+  .stat .num{ font-family:'Share Tech Mono',monospace; font-size:1.9rem; color:var(--glow); text-shadow:0 0 10px var(--glow-soft); }
+  .stat .num.gold{ color:var(--sq); text-shadow:0 0 10px var(--sq-soft); }
+  .stat .num.small{ font-size:1.2rem; }
+  .stat .label{ color:var(--muted); font-size:0.74rem; letter-spacing:1px; text-transform:uppercase; }
+
+  .section-title{ font-size:1rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--glow); margin-bottom:14px; }
+
+  .bar-row{ display:grid; grid-template-columns:190px 1fr 70px 46px; align-items:center; gap:10px; margin:10px 0; }
+  .bar-row .name{ font-size:0.86rem; }
+  .rank{ font-family:'Share Tech Mono',monospace; font-size:0.78rem; text-align:center; padding:1px 6px; border:1px solid var(--border); border-radius:3px; }
+  .bar-track{ background:#12192C; height:9px; border-radius:2px; overflow:hidden; border:1px solid var(--border); }
+  .bar-fill{ height:100%; background:linear-gradient(90deg,var(--glow),#7ED0FF); box-shadow:0 0 6px var(--glow-soft); }
+  .bar-fill.weak{ background:linear-gradient(90deg,var(--weak),#FFAB8A); box-shadow:0 0 6px var(--weak-soft); }
+  .bar-pct{ font-family:'Share Tech Mono',monospace; font-size:0.8rem; color:var(--muted); text-align:right; }
+
+  .subject-block{ margin-bottom:12px; }
+  .subject-head{ display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:13px 16px; background:var(--panel); border:1px solid var(--border); }
+  .subject-head:hover{ border-color:var(--glow); }
+  .subject-head .sh-title{ font-weight:600; font-size:1rem; }
+  .subject-head .sh-pct{ font-family:'Share Tech Mono',monospace; font-size:0.82rem; color:var(--muted); }
+  .topics{ display:none; padding:4px 16px 14px 16px; border:1px solid var(--border); border-top:none; background:#080C18; }
+  .topics.open{ display:block; }
+  .topic-row{ display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid #131B30; font-size:0.9rem; }
+  .topic-row:last-child{ border-bottom:none; }
+  .topic-row input{ width:16px; height:16px; accent-color:var(--glow); cursor:pointer; }
+  .topic-row.done label{ color:var(--done); text-decoration:line-through; opacity:0.75; }
+  .revise-tag{ font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--sq); border:1px solid var(--sq); padding:0 5px; margin-left:6px; text-decoration:none !important; }
+
+  form.logform{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  form.logform .full{ grid-column:1/-1; }
+  @media(max-width:600px){ form.logform{ grid-template-columns:1fr; } }
+  label.field-label{ font-size:0.74rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:5px; }
+  input[type=text], input[type=date], input[type=number], select, textarea{
+    width:100%; padding:9px 10px; border:1px solid var(--border); background:#080C18; color:var(--text);
+    font-family:'Rajdhani',sans-serif; font-size:0.95rem;
+  }
+  input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--glow); box-shadow:0 0 6px var(--glow-soft); }
+  textarea{ resize:vertical; min-height:50px; }
+  button.primary{
+    background:var(--glow); color:#031018; border:none; padding:11px 20px; font-weight:700;
+    font-family:'Rajdhani',sans-serif; letter-spacing:1px; cursor:pointer; clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px);
+  }
+  button.primary:hover{ box-shadow:0 0 14px var(--glow); }
+  button.ghost{ background:none; border:1px solid var(--border); color:var(--muted); padding:7px 14px; cursor:pointer; font-family:'Share Tech Mono',monospace; font-size:0.78rem; }
+  button.ghost:hover{ border-color:var(--weak); color:var(--weak); }
+  button.ghost.blue:hover{ border-color:var(--glow); color:var(--glow); }
+
+  .log-entry{ display:flex; justify-content:space-between; gap:14px; padding:13px 0; border-bottom:1px solid var(--border); }
+  .log-entry:last-child{ border-bottom:none; }
+  .log-entry .le-main{ font-size:0.92rem; }
+  .log-entry .le-date{ color:var(--muted); font-size:0.78rem; font-family:'Share Tech Mono',monospace; }
+  .log-entry .le-hours{ font-family:'Share Tech Mono',monospace; font-size:1.05rem; color:var(--glow); white-space:nowrap; }
+  .empty{ color:var(--muted); font-size:0.9rem; padding:16px 0; text-align:center; }
+
+  .chart-wrap{ width:100%; overflow-x:auto; }
+  .chart-wrap svg{ width:100%; height:auto; display:block; }
+  .legend{ display:flex; gap:16px; font-size:0.76rem; color:var(--muted); margin-top:8px; font-family:'Share Tech Mono',monospace; flex-wrap:wrap; }
+  .legend span{ display:inline-flex; align-items:center; gap:5px; }
+  .legend i{ width:9px; height:9px; display:inline-block; }
+
+  footer.reset-row{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; flex-wrap:wrap; gap:10px; }
+  ::selection{ background:var(--glow-soft); }
+
+  .sq-entry{ display:flex; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:0.86rem; }
+  .sq-entry:last-child{ border-bottom:none; }
+  .sq-entry .sq-result{ font-family:'Share Tech Mono',monospace; font-size:0.78rem; }
+  .sq-entry .sq-result.win{ color:var(--done); }
+  .sq-entry .sq-result.lose{ color:var(--weak); }
+
+  .goal-row{ display:grid; grid-template-columns:190px 90px 1fr 90px; align-items:center; gap:10px; margin:9px 0; }
+  .goal-row input[type=number]{ padding:6px 8px; font-size:0.85rem; }
+  .goal-actual{ font-family:'Share Tech Mono',monospace; font-size:0.78rem; color:var(--muted); text-align:right; }
+
+  #sq-overlay, #settings-overlay{
+    position:fixed; inset:0; background:rgba(2,4,10,0.86); backdrop-filter:blur(2px);
+    display:none; align-items:center; justify-content:center; z-index:999; padding:20px;
+  }
+  #sq-overlay.open, #settings-overlay.open{ display:flex; }
+  .sq-box{
+    width:100%; max-width:460px; background:linear-gradient(180deg,#1A1204,#0E0C05); border:1px solid var(--sq);
+    box-shadow:0 0 30px rgba(255,176,32,0.25); clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    padding:26px; animation:sqAppear 0.35s ease-out;
+  }
+  .settings-box{
+    width:100%; max-width:420px; background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--glow);
+    box-shadow:0 0 30px rgba(63,169,245,0.2); clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    padding:26px; animation:sqAppear 0.3s ease-out;
+  }
+  @keyframes sqAppear{ from{ opacity:0; transform:scale(0.92); } to{ opacity:1; transform:scale(1); } }
+  .sq-alert{ font-family:'Share Tech Mono',monospace; color:var(--sq); font-size:0.8rem; letter-spacing:2px; text-align:center; margin-bottom:6px; animation:sqBlink 1.1s steps(2) infinite; }
+  @keyframes sqBlink{ 50%{ opacity:0.35; } }
+  .sq-title{ text-align:center; font-size:1.5rem; font-weight:700; color:#fff; margin-bottom:4px; text-shadow:0 0 14px var(--sq-soft); }
+  .sq-sub{ text-align:center; color:var(--muted); font-size:0.82rem; margin-bottom:18px; }
+  .sq-tag{ display:inline-block; font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--sq); border:1px solid var(--sq); padding:2px 8px; margin-bottom:12px; }
+  .sq-question{ font-size:1.05rem; margin-bottom:16px; line-height:1.5; }
+  .sq-option{
+    display:block; width:100%; text-align:left; background:#0B0900; border:1px solid var(--border); color:var(--text);
+    padding:11px 14px; margin-bottom:9px; cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:0.95rem;
+  }
+  .sq-option:hover{ border-color:var(--sq); }
+  .sq-option.correct{ border-color:var(--done); color:var(--done); box-shadow:0 0 10px rgba(56,230,180,0.2); }
+  .sq-option.incorrect{ border-color:var(--weak); color:var(--weak); box-shadow:0 0 10px rgba(255,107,74,0.2); }
+  .sq-result-banner{ text-align:center; margin:14px 0; font-family:'Share Tech Mono',monospace; font-size:1rem; }
+  .sq-result-banner.win{ color:var(--done); }
+  .sq-result-banner.lose{ color:var(--weak); }
+  .sq-close{ display:block; margin:16px auto 0; background:var(--sq); color:#1A1204; border:none; padding:10px 24px; font-weight:700; font-family:'Rajdhani',sans-serif; letter-spacing:1px; cursor:pointer; clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px); }
+
+  .settings-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.9rem; }
+  .settings-row:last-of-type{ border-bottom:none; }
+  .toggle{ position:relative; width:42px; height:22px; background:#12192C; border:1px solid var(--border); cursor:pointer; }
+  .toggle.on{ background:var(--glow-soft); border-color:var(--glow); }
+  .toggle .dot{ position:absolute; top:2px; left:2px; width:16px; height:16px; background:var(--muted); transition:.2s; }
+  .toggle.on .dot{ left:22px; background:var(--glow); }
+
+  #level-toast{
+    position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-30px); opacity:0; z-index:1000;
+    background:linear-gradient(180deg,#1A1204,#0E0C05); border:1px solid var(--sq); box-shadow:0 0 24px rgba(255,176,32,0.35);
+    padding:14px 28px; text-align:center; clip-path:polygon(12px 0,100% 0,100% 100%,0 100%,0 12px); transition:all 0.4s ease;
+  }
+  #level-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  #level-toast .lt-title{ font-family:'Share Tech Mono',monospace; color:var(--sq); font-size:0.8rem; letter-spacing:2px; }
+  #level-toast .lt-level{ font-size:1.4rem; font-weight:700; color:#fff; }
+
+  .heatmap-grid{ display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,1fr); gap:3px; }
+  .heatmap-cell{ width:12px; height:12px; background:#12192C; border-radius:2px; }
+</style>
+</head>
+<body>
+<div id="level-toast"><div class="lt-title mono">LEVEL UP</div><div class="lt-level" id="lt-level-text">Lv.2</div></div>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="tag mono">[ SYSTEM WINDOW — ARC: GATE ES 2027 ]</div>
+      <h1>HUNTER STATUS</h1>
+      <p>Track your skill tree, log daily quests, monitor your rise in rank.</p>
+    </div>
+    <div class="header-btns">
+      <button id="settings-btn" class="mono" title="Settings">⚙</button>
+      <button id="sq-trigger-btn" class="mono">⚠ SUDDEN QUEST</button>
+    </div>
+  </header>
+
+  <div class="warn-banner" id="streak-warning" style="display:none;"></div>
+
+  <nav id="tabs">
+    <button data-tab="dashboard" class="active">STATUS</button>
+    <button data-tab="syllabus">SKILL TREE</button>
+    <button data-tab="log">QUEST LOG</button>
+    <button data-tab="boss">BOSS QUESTS</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <section id="tab-dashboard">
+    <div class="panel">
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="stat-level">Lv.1</div><div class="label">Hunter Level</div></div>
+        <div class="stat"><div class="num small" id="stat-title">Novice Hunter</div><div class="label">Title</div></div>
+        <div class="stat"><div class="num" id="stat-overall">0%</div><div class="label">Skill Tree Cleared</div></div>
+        <div class="stat"><div class="num" id="stat-hours">0</div><div class="label">Hours Trained</div></div>
+        <div class="stat"><div class="num gold" id="stat-exp">0</div><div class="label">EXP Earned</div></div>
+        <div class="stat"><div class="num gold" id="stat-streak">0</div><div class="label">Day Streak</div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3 class="section-title">Growth Log</h3>
+        <div class="chart-wrap" id="chart-line"></div>
+        <div class="legend"><span><i style="background:var(--glow)"></i>Cumulative hours trained</span></div>
+      </div>
+      <div class="panel">
+        <h3 class="section-title">Skill Ranks</h3>
+        <div class="chart-wrap" id="chart-bar"></div>
+        <div class="legend"><span><i style="background:var(--glow)"></i>On track</span><span><i style="background:var(--weak)"></i>Weak — priority</span></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3 class="section-title">Time Allocation by Subject</h3>
+        <div class="chart-wrap" id="chart-time"></div>
+      </div>
+      <div class="panel">
+        <h3 class="section-title">Study Streak — Last 12 Weeks</h3>
+        <div class="chart-wrap" id="chart-heatmap"></div>
+        <div class="legend"><span><i style="background:#12192C"></i>None</span><span><i style="background:#1C5C8A"></i>Some</span><span><i style="background:#3FA9F5"></i>Solid</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Skill Breakdown</h3>
+      <div id="subject-bars"></div>
+    </div>
+
+    <div class="panel" id="revision-panel">
+      <h3 class="section-title">Revision Due (14+ days)</h3>
+      <div id="revision-list"></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Sudden Quest Log</h3>
+      <div id="sq-list"></div>
+    </div>
+  </section>
+
+  <!-- SYLLABUS -->
+  <section id="tab-syllabus" style="display:none;">
+    <div class="panel" style="padding:16px 20px;">
+      <div class="stat-row" style="margin-bottom:0;">
+        <div class="stat"><div class="num" id="syl-overall">0%</div><div class="label">Tree Cleared</div></div>
+      </div>
+    </div>
+    <div id="subject-list"></div>
+  </section>
+
+  <!-- LOG -->
+  <section id="tab-log" style="display:none;">
+    <div class="panel">
+      <h3 class="section-title">Log a Quest</h3>
+      <form class="logform" id="log-form">
+        <div><label class="field-label">Date</label><input type="date" id="le-date" required></div>
+        <div><label class="field-label">Skill</label><select id="le-subject" required></select></div>
+        <div><label class="field-label">Hours Trained</label><input type="number" id="le-hours" min="0" step="0.5" required></div>
+        <div><label class="field-label">Abilities Covered</label><input type="text" id="le-topics" placeholder="e.g. Laplace transforms, Fourier series"></div>
+        <div class="full"><label class="field-label">Notes</label><textarea id="le-notes" placeholder="A tricky concept, a mock score, a doubt to clear."></textarea></div>
+        <div class="full"><button type="submit" class="primary">COMPLETE QUEST</button></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Weekly Targets vs Actual (last 7 days)</h3>
+      <div id="goal-list"></div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Quest History</h3>
+      <div id="log-list"></div>
+    </div>
+    <footer class="reset-row">
+      <button class="ghost blue" id="export-btn">EXPORT BACKUP</button>
+      <button class="ghost" id="reset-btn">RESET SYSTEM DATA</button>
+    </footer>
+  </section>
+
+  <!-- BOSS QUESTS -->
+  <section id="tab-boss" style="display:none;">
+    <div class="panel">
+      <h3 class="section-title">Log a Boss Battle (Mock Test)</h3>
+      <form class="logform" id="boss-form">
+        <div><label class="field-label">Date</label><input type="date" id="bq-date" required></div>
+        <div><label class="field-label">Test Name</label><input type="text" id="bq-name" placeholder="e.g. Mock Test 3"></div>
+        <div><label class="field-label">Score Obtained</label><input type="number" id="bq-score" min="0" step="0.5" required></div>
+        <div><label class="field-label">Total Marks</label><input type="number" id="bq-total" min="1" step="0.5" value="100" required></div>
+        <div class="full"><label class="field-label">Notes</label><textarea id="bq-notes" placeholder="Weak sections this attempt, silly mistakes, timing issues."></textarea></div>
+        <div class="full"><button type="submit" class="primary">LOG BOSS RESULT</button></div>
+      </form>
+    </div>
+    <div class="panel">
+      <h3 class="section-title">Boss Battle Trend</h3>
+      <div class="chart-wrap" id="chart-boss"></div>
+      <div class="legend"><span><i style="background:var(--sq)"></i>Score %</span></div>
+    </div>
+    <div class="panel">
+      <h3 class="section-title">Battle History</h3>
+      <div id="boss-list"></div>
+    </div>
+  </section>
+</div>
+
+<div id="sq-overlay"><div class="sq-box" id="sq-box"></div></div>
+
+<div id="settings-overlay">
+  <div class="settings-box">
+    <h3 class="section-title" style="margin-bottom:18px;">System Settings</h3>
+    <div class="settings-row">
+      <span>Sudden Quest sound cue</span>
+      <div class="toggle" id="sound-toggle"><div class="dot"></div></div>
+    </div>
+    <div class="settings-row">
+      <span>Export progress backup</span>
+      <button class="ghost blue" id="settings-export-btn">EXPORT</button>
+    </div>
+    <div class="settings-row">
+      <span>Import progress backup</span>
+      <label class="ghost blue" style="cursor:pointer; display:inline-block;">IMPORT<input type="file" id="import-input" accept="application/json" style="display:none;"></label>
+    </div>
+    <button class="sq-close" id="settings-close-btn" style="background:var(--glow); color:#031018;">CLOSE</button>
+  </div>
+</div>
+
+<script>
+const SYLLABUS = {
+  "Engineering Mathematics": ["Linear Algebra","Calculus","Differential Equations","Probability & Statistics","Numerical Methods"],
+  "Environmental Chemistry": ["Basic Concepts & Water Chemistry","Air & Soil Chemistry","Organic Chemistry Basics","Chemical Kinetics","Instrumental Analysis"],
+  "Environmental Microbiology": ["Microbial Classification","Growth Kinetics","Water/Wastewater Microbiology","Pathogens & Indicator Organisms","Biodegradation"],
+  "Water Supply Engineering": ["Water Demand & Sources","Water Quality Parameters & Standards","Intake & Conveyance","Treatment Unit Processes","Distribution Systems"],
+  "Wastewater Engineering": ["Sewage Characteristics","Sewer Design & Hydraulics","Primary & Secondary Treatment","Activated Sludge & Trickling Filters","Sludge Treatment & Disposal"],
+  "Air Pollution": ["Sources & Classification of Pollutants","Air Quality Standards & Monitoring","Meteorology & Dispersion Modeling","Control Equipment (ESP, Scrubbers, Baghouse)","Indoor Air Quality"],
+  "Solid & Hazardous Waste Management": ["Waste Generation & Characterization","Collection & Transport","Treatment Technologies","Landfill Design","Hazardous Waste Handling"],
+  "Noise Pollution": ["Noise Fundamentals & Metrics","Standards & Regulations","Sources & Measurement","Control Methods"],
+  "Environmental Impact Assessment": ["EIA Process & Methodology","Environmental Management Plans","Legislation (EPA, Forest, Wildlife Acts)","Public Hearing & Clearance Process"],
+  "Ecology & Biodiversity": ["Ecosystem Structure & Function","Biogeochemical Cycles","Biodiversity & Conservation","Environmental Impact on Ecosystems"],
+  "Environmental Hydraulics & Water Resources": ["Fluid Properties & Flow in Pipes/Channels","Open Channel Flow","Hydrology (Rainfall-Runoff, Groundwater)","Reservoir & Flood Routing","Irrigation Basics"]
+};
+const WEAK_SUBJECTS = ["Solid & Hazardous Waste Management","Environmental Microbiology","Engineering Mathematics","Environmental Hydraulics & Water Resources"];
+
+const QUESTION_BANK = [
+  { subject:"Engineering Mathematics", q:"The Laplace transform of a unit step function u(t) is:", options:["1/s","s","1/s²","e⁻ˢ"], correct:0 },
+  { subject:"Engineering Mathematics", q:"The rank of a matrix is defined as:", options:["The maximum number of linearly independent rows/columns","The number of rows only","The determinant value","The trace of the matrix"], correct:0 },
+  { subject:"Engineering Mathematics", q:"Eigenvalues of a symmetric real matrix are always:", options:["Real","Complex","Zero","Negative"], correct:0 },
+  { subject:"Engineering Mathematics", q:"A Fourier series represents a periodic function as a sum of:", options:["Sines and cosines","Only polynomials","Non-periodic exponentials","Random functions"], correct:0 },
+  { subject:"Environmental Chemistry", q:"Permanent hardness in water is mainly caused by:", options:["Calcium and magnesium bicarbonates","Calcium and magnesium sulfates/chlorides","Sodium carbonate","Dissolved CO₂"], correct:1 },
+  { subject:"Environmental Chemistry", q:"The pH of pure water at 25°C is approximately:", options:["7","0","14","5"], correct:0 },
+  { subject:"Environmental Chemistry", q:"Which test measures organic matter indirectly via oxygen consumed over 5 days?", options:["BOD","COD","TDS","DO"], correct:0 },
+  { subject:"Environmental Microbiology", q:"The standard BOD test is incubated at:", options:["20°C for 5 days","37°C for 24 hours","4°C for 5 days","100°C for 1 hour"], correct:0 },
+  { subject:"Environmental Microbiology", q:"Coliform bacteria are used as indicator organisms mainly because they:", options:["Are easy to detect and indicate fecal contamination","Directly cause waterborne disease","Consume BOD rapidly","Only exist in soil"], correct:0 },
+  { subject:"Environmental Microbiology", q:"Autotrophic organisms obtain their carbon primarily from:", options:["Carbon dioxide","Organic compounds","Nitrogen gas","Water only"], correct:0 },
+  { subject:"Water Supply Engineering", q:"The most commonly used coagulant in conventional water treatment is:", options:["Alum (aluminum sulfate)","Chlorine","Lime","Activated carbon"], correct:0 },
+  { subject:"Water Supply Engineering", q:"Which unit process typically follows coagulation-flocculation in a conventional treatment train?", options:["Sedimentation","Disinfection","Screening","Aeration"], correct:0 },
+  { subject:"Water Supply Engineering", q:"The most common disinfectant used in municipal water supply is:", options:["Chlorine","Ozone only","UV only","Potassium permanganate"], correct:0 },
+  { subject:"Wastewater Engineering", q:"In the activated sludge process, MLSS stands for:", options:["Mixed Liquor Suspended Solids","Minimum Liquid Suspended Solids","Mixed Layer Sediment Solids","Maximum Load Suspended Solids"], correct:0 },
+  { subject:"Wastewater Engineering", q:"Primary sedimentation in wastewater treatment mainly removes:", options:["Settleable solids","Dissolved salts","All pathogens","All heavy metals"], correct:0 },
+  { subject:"Wastewater Engineering", q:"Trickling filters primarily rely on which treatment mechanism?", options:["Attached-growth biological treatment","Suspended-growth treatment","Chemical precipitation","Membrane filtration"], correct:0 },
+  { subject:"Air Pollution", q:"Along with SO₂, which pollutant majorly contributes to acid rain?", options:["NOₓ","CO","CO₂","Particulate matter"], correct:0 },
+  { subject:"Air Pollution", q:"Electrostatic precipitators remove particulates mainly using:", options:["Electrostatic charging and attraction","Gravity settling only","Water spray absorption","Chemical neutralization"], correct:0 },
+  { subject:"Solid & Hazardous Waste Management", q:"The 3R principle in solid waste management stands for:", options:["Reduce, Reuse, Recycle","Reduce, Remove, Replace","Recover, Reuse, Repair","Reduce, Recycle, Repair"], correct:0 },
+  { subject:"Solid & Hazardous Waste Management", q:"The generally preferred method for final disposal of municipal solid waste is:", options:["Sanitary landfilling","Open dumping","Ocean dumping","Uncontrolled burning"], correct:0 },
+  { subject:"Solid & Hazardous Waste Management", q:"Landfill leachate refers to:", options:["Liquid that percolates through waste, picking up contaminants","Gas emitted from decomposing waste","Solid residue after incineration","Recyclable material recovered from waste"], correct:0 },
+  { subject:"Noise Pollution", q:"Noise level is measured in:", options:["Decibels (dB)","Hertz","Lux","Pascal"], correct:0 },
+  { subject:"Noise Pollution", q:"CPCB's daytime residential ambient noise limit in India is roughly:", options:["55 dB(A)","75 dB(A)","90 dB(A)","40 dB(A)"], correct:0 },
+  { subject:"Environmental Impact Assessment", q:"In India, EIA for projects is primarily governed under the:", options:["EIA Notification, 2006","Water Act, 1974","Air Act, 1981","Wildlife Protection Act, 1972"], correct:0 },
+  { subject:"Environmental Impact Assessment", q:"Which of these is NOT a standard stage of the EIA process?", options:["Direct financial audit of the project","Screening","Scoping","Public consultation"], correct:0 },
+  { subject:"Ecology & Biodiversity", q:"The flow of energy through an ecosystem is:", options:["Unidirectional","Cyclic","Bidirectional","Random"], correct:0 },
+  { subject:"Ecology & Biodiversity", q:"Primary producers occupy which trophic level?", options:["Level 1","Level 2","Level 3","Level 4"], correct:0 },
+  { subject:"Environmental Hydraulics & Water Resources", q:"Manning's equation is used to calculate:", options:["Flow velocity in open channels","Pressure in closed pipes","Groundwater recharge rate","Rainfall intensity"], correct:0 },
+  { subject:"Environmental Hydraulics & Water Resources", q:"Specific energy in open channel flow is measured with respect to:", options:["The channel bed","Mean sea level","The water surface","Atmospheric pressure"], correct:0 },
+  { subject:"Environmental Hydraulics & Water Resources", q:"A hydrograph represents the relationship between:", options:["Discharge and time","Rainfall and catchment area","Pressure and depth","Velocity and viscosity"], correct:0 }
+];
+
+const TITLES = [
+  {min:0,  title:"Novice Hunter"},
+  {min:20, title:"Apprentice Hunter"},
+  {min:40, title:"Skilled Hunter"},
+  {min:60, title:"Elite Hunter"},
+  {min:80, title:"National Rank Hunter"},
+  {min:95, title:"Monarch"}
+];
+function titleFor(pct){
+  let t = TITLES[0].title;
+  TITLES.forEach(tier=>{ if(pct >= tier.min) t = tier.title; });
+  return t;
+}
+
+const LOCAL_KEY = "gate_es_tracker_local";
+function normalizeState(raw){
+  const s = raw || {};
+  const checked = {};
+  Object.keys(SYLLABUS).forEach(subj=>{
+    checked[subj] = {};
+    const existing = (s.checked && s.checked[subj]) || {};
+    SYLLABUS[subj].forEach(topic=>{
+      const v = existing[topic];
+      if(v && typeof v === "object"){ checked[subj][topic] = { done: !!v.done, date: v.date || null }; }
+      else if(typeof v === "boolean"){ checked[subj][topic] = { done: v, date: v ? new Date().toISOString().slice(0,10) : null }; }
+      else { checked[subj][topic] = { done:false, date:null }; }
+    });
+  });
+  return {
+    checked,
+    logs: Array.isArray(s.logs) ? s.logs : [],
+    exp: typeof s.exp === "number" ? s.exp : 0,
+    suddenLog: Array.isArray(s.suddenLog) ? s.suddenLog : [],
+    bossLogs: Array.isArray(s.bossLogs) ? s.bossLogs : [],
+    weeklyGoals: s.weeklyGoals || {},
+    lastSeenLevel: typeof s.lastSeenLevel === "number" ? s.lastSeenLevel : null,
+    settings: { sound: s.settings && typeof s.settings.sound === "boolean" ? s.settings.sound : true }
+  };
+}
+function loadLocalFallback(){
+  try{
+    const raw = localStorage.getItem(LOCAL_KEY) || localStorage.getItem("gate_es_tracker_v2") || localStorage.getItem("gate_es_tracker_v1");
+    if(raw) return normalizeState(JSON.parse(raw));
+  }catch(e){}
+  return normalizeState(null);
+}
+async function getCloudDb(){
+  try{
+    if(typeof claude === "undefined" || !claude.use) return null;
+    const db = await claude.use("db");
+    return db || null;
+  }catch(e){ return null; }
+}
+let dbNamespace = null;
+let state = normalizeState(null);
+function saveState(){
+  if(dbNamespace){
+    dbNamespace.doc("hunter/state").set(state).catch(()=>{});
+  } else {
+    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); }catch(e){}
+  }
+}
+async function initApp(){
+  populateSubjectSelect();
+  document.getElementById("le-date").value = todayStr();
+  document.getElementById("bq-date").value = todayStr();
+  render();
+  dbNamespace = await getCloudDb();
+  if(dbNamespace){
+    dbNamespace.doc("hunter/state").onSnapshot(snap=>{
+      state = normalizeState(snap && snap.data ? snap.data : null);
+      if(state.lastSeenLevel === null) state.lastSeenLevel = computeLevel();
+      render();
+    });
+  } else {
+    state = loadLocalFallback();
+    if(state.lastSeenLevel === null){ state.lastSeenLevel = computeLevel(); }
+    render();
+  }
+}
+
+function totalTopics(){ return Object.values(SYLLABUS).reduce((a,t)=>a+t.length,0); }
+function doneTopics(){
+  let c=0;
+  Object.keys(SYLLABUS).forEach(s=> Object.values(state.checked[s]).forEach(v=>{ if(v.done) c++; }));
+  return c;
+}
+function subjectPct(s){
+  const total = SYLLABUS[s].length;
+  const done = Object.values(state.checked[s]).filter(v=>v.done).length;
+  return total ? Math.round((done/total)*100) : 0;
+}
+function overallPct(){
+  const total = totalTopics();
+  return total ? Math.round((doneTopics()/total)*100) : 0;
+}
+function rankFor(pct){
+  if(pct>=90) return "S"; if(pct>=70) return "A"; if(pct>=50) return "B"; if(pct>=30) return "C"; if(pct>=10) return "D"; return "E";
+}
+function rankColor(rank){ return { S:"#38E6B4", A:"#3FA9F5", B:"#8B6CF5", C:"#E8C84A", D:"#FF9E4A", E:"#FF6B4A" }[rank]; }
+function totalHours(){ return state.logs.reduce((a,l)=>a+Number(l.hours||0),0); }
+function computeLevel(){ const score = totalHours()*10 + (state.exp||0); return Math.floor(score/50)+1; }
+
+function dayDiff(a,b){ return Math.round((a-b)/86400000); }
+function toDate(str){ const [y,m,d] = str.split("-").map(Number); return new Date(y, m-1, d); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function computeStreak(){
+  const days = [...new Set(state.logs.map(l=>l.date))].sort().reverse();
+  if(days.length===0) return { streak:0, atRisk:false };
+  const today = toDate(todayStr());
+  const latest = toDate(days[0]);
+  const gap = dayDiff(today, latest);
+  if(gap > 1) return { streak:0, atRisk:false };
+  let streak = 1;
+  for(let i=0;i<days.length-1;i++){
+    const diff = dayDiff(toDate(days[i]), toDate(days[i+1]));
+    if(diff===1) streak++; else break;
+  }
+  return { streak, atRisk: gap===1 };
+}
+
+// ---------- Tabs ----------
+document.getElementById("tabs").addEventListener("click", e=>{
+  if(e.target.tagName !== "BUTTON") return;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active");
+  const tab = e.target.dataset.tab;
+  ["dashboard","syllabus","log","boss"].forEach(t=>{
+    document.getElementById("tab-"+t).style.display = (t===tab) ? "block" : "none";
+  });
+  render();
+});
+
+// ---------- Syllabus list ----------
+function renderSyllabus(){
+  const container = document.getElementById("subject-list");
+  container.innerHTML = "";
+  Object.keys(SYLLABUS).forEach(subject=>{
+    const block = document.createElement("div");
+    block.className = "subject-block";
+    const pct = subjectPct(subject);
+    const rank = rankFor(pct);
+    block.innerHTML = `
+      <div class="subject-head" data-subject="${subject}">
+        <span class="sh-title">${subject}</span>
+        <span class="sh-pct">RANK <span class="mono" style="color:${rankColor(rank)}">${rank}</span> — ${pct}%</span>
+      </div>
+      <div class="topics" id="topics-${cssId(subject)}"></div>
+    `;
+    container.appendChild(block);
+    const topicsDiv = block.querySelector(".topics");
+    SYLLABUS[subject].forEach(topic=>{
+      const row = document.createElement("div");
+      const entry = state.checked[subject][topic];
+      const overdue = entry.done && entry.date && dayDiff(toDate(todayStr()), toDate(entry.date)) >= 14;
+      row.className = "topic-row" + (entry.done ? " done" : "");
+      const id = cssId(subject+"-"+topic);
+      row.innerHTML = `<input type="checkbox" id="${id}" ${entry.done?"checked":""}><label for="${id}">${topic}</label>${overdue?'<span class="revise-tag">REVISE</span>':''}`;
+      row.querySelector("input").addEventListener("change", ev=>{
+        const nowDone = ev.target.checked;
+        state.checked[subject][topic] = { done: nowDone, date: nowDone ? todayStr() : null };
+        saveState();
+        render();
+      });
+      topicsDiv.appendChild(row);
+    });
+  });
+  container.querySelectorAll(".subject-head").forEach(h=>{
+    h.addEventListener("click", ()=>{
+      document.getElementById("topics-"+cssId(h.dataset.subject)).classList.toggle("open");
+    });
+  });
+  document.getElementById("syl-overall").textContent = overallPct()+"%";
+}
+function cssId(s){ return s.replace(/[^a-zA-Z0-9]/g,"_"); }
+
+function renderSubjectBars(){
+  const el = document.getElementById("subject-bars");
+  el.innerHTML = "";
+  Object.keys(SYLLABUS).forEach(subject=>{
+    const pct = subjectPct(subject);
+    const weak = WEAK_SUBJECTS.includes(subject);
+    const rank = rankFor(pct);
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    row.innerHTML = `
+      <div class="name">${subject}</div>
+      <div class="bar-track"><div class="bar-fill${weak?" weak":""}" style="width:${pct}%"></div></div>
+      <div class="rank mono" style="color:${rankColor(rank)}; border-color:${rankColor(rank)}66;">RANK ${rank}</div>
+      <div class="bar-pct">${pct}%</div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function renderRevisionList(){
+  const el = document.getElementById("revision-list");
+  const due = [];
+  Object.keys(SYLLABUS).forEach(subject=>{
+    SYLLABUS[subject].forEach(topic=>{
+      const entry = state.checked[subject][topic];
+      if(entry.done && entry.date && dayDiff(toDate(todayStr()), toDate(entry.date)) >= 14){
+        due.push({ subject, topic, days: dayDiff(toDate(todayStr()), toDate(entry.date)) });
+      }
+    });
+  });
+  if(due.length===0){ el.innerHTML = '<div class="empty mono">// nothing overdue — skill retention looks solid</div>'; return; }
+  due.sort((a,b)=> b.days-a.days);
+  el.innerHTML = due.map(d=>`
+    <div class="sq-entry">
+      <div>${d.topic} <span style="color:var(--muted); font-size:0.78rem;">— ${d.subject}</span></div>
+      <div class="sq-result mono" style="color:var(--sq)">${d.days}d ago</div>
+    </div>
+  `).join("");
+}
+
+// ---------- Charts ----------
+function renderLineChart(){
+  const el = document.getElementById("chart-line");
+  const logs = [...state.logs].sort((a,b)=> a.date.localeCompare(b.date));
+  if(logs.length === 0){ el.innerHTML = '<div class="empty mono">// no quest data yet — log a session to begin tracking</div>'; return; }
+  const dates = [...new Set(logs.map(l=>l.date))].sort();
+  let cum = 0;
+  const points = dates.map(d=>{ const dayHours = logs.filter(l=>l.date===d).reduce((a,l)=>a+Number(l.hours),0); cum += dayHours; return { date:d, cum }; });
+  const w = 480, h = 200, pad = 34;
+  const maxY = Math.max(...points.map(p=>p.cum), 1);
+  const xStep = (w - pad*2) / Math.max(points.length-1,1);
+  const coords = points.map((p,i)=>{ const x = pad + i*xStep; const y = h - pad - (p.cum/maxY)*(h-pad*2); return {x,y,...p}; });
+  const pathD = coords.map((c,i)=> (i===0?"M":"L")+c.x.toFixed(1)+","+c.y.toFixed(1)).join(" ");
+  let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<defs><linearGradient id="glowline" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3FA9F5" stop-opacity="0.35"/><stop offset="100%" stop-color="#3FA9F5" stop-opacity="0"/></linearGradient></defs>`;
+  svg += `<line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#1E3A5F"/>`;
+  const areaD = pathD + ` L${coords[coords.length-1].x.toFixed(1)},${h-pad} L${coords[0].x.toFixed(1)},${h-pad} Z`;
+  svg += `<path d="${areaD}" fill="url(#glowline)"/>`;
+  svg += `<path d="${pathD}" fill="none" stroke="#3FA9F5" stroke-width="2.5"/>`;
+  coords.forEach(c=>{ svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3.5" fill="#DCE8F7" stroke="#3FA9F5" stroke-width="1.5"/>`; });
+  svg += `<text x="${pad}" y="16" font-size="11" fill="#5F7690" font-family="Share Tech Mono, monospace">CUMULATIVE HOURS</text></svg>`;
+  el.innerHTML = svg;
+}
+
+function renderBarChart(){
+  const el = document.getElementById("chart-bar");
+  const subjects = Object.keys(SYLLABUS);
+  const w = 480, barH = 20, gap = 11, pad = 128, chartW = w - pad - 44;
+  const h = subjects.length*(barH+gap) + 8;
+  let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  subjects.forEach((s,i)=>{
+    const pct = subjectPct(s); const y = i*(barH+gap)+4; const barW = (pct/100)*chartW; const weak = WEAK_SUBJECTS.includes(s);
+    svg += `<text x="0" y="${y+barH*0.7}" font-size="10.5" fill="#DCE8F7" font-family="Rajdhani, sans-serif">${truncate(s,19)}</text>`;
+    svg += `<rect x="${pad}" y="${y}" width="${chartW}" height="${barH}" fill="#12192C" stroke="#1E3A5F"/>`;
+    svg += `<rect x="${pad}" y="${y}" width="${Math.max(barW,2)}" height="${barH}" fill="${weak?'#FF6B4A':'#3FA9F5'}"/>`;
+    svg += `<text x="${pad+chartW+6}" y="${y+barH*0.7}" font-size="10.5" fill="#5F7690" font-family="Share Tech Mono, monospace">${pct}%</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = svg;
+}
+
+function renderTimeChart(){
+  const el = document.getElementById("chart-time");
+  const subjects = Object.keys(SYLLABUS);
+  const hoursBySubj = {};
+  subjects.forEach(s=> hoursBySubj[s] = 0);
+  state.logs.forEach(l=>{ if(hoursBySubj[l.subject] !== undefined) hoursBySubj[l.subject] += Number(l.hours||0); });
+  const maxH = Math.max(...Object.values(hoursBySubj), 1);
+  if(totalHours()===0){ el.innerHTML = '<div class="empty mono">// no hours logged yet</div>'; return; }
+  const w = 480, barH = 20, gap = 11, pad = 128, chartW = w - pad - 50;
+  const h = subjects.length*(barH+gap) + 8;
+  let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  subjects.forEach((s,i)=>{
+    const hrs = hoursBySubj[s]; const y = i*(barH+gap)+4; const barW = (hrs/maxH)*chartW;
+    svg += `<text x="0" y="${y+barH*0.7}" font-size="10.5" fill="#DCE8F7" font-family="Rajdhani, sans-serif">${truncate(s,19)}</text>`;
+    svg += `<rect x="${pad}" y="${y}" width="${chartW}" height="${barH}" fill="#12192C" stroke="#1E3A5F"/>`;
+    svg += `<rect x="${pad}" y="${y}" width="${Math.max(barW,2)}" height="${barH}" fill="#8B6CF5"/>`;
+    svg += `<text x="${pad+chartW+6}" y="${y+barH*0.7}" font-size="10.5" fill="#5F7690" font-family="Share Tech Mono, monospace">${hrs}h</text>`;
+  });
+  svg += `</svg>`;
+  el.innerHTML = svg;
+}
+
+function renderHeatmap(){
+  const el = document.getElementById("chart-heatmap");
+  const hoursByDay = {};
+  state.logs.forEach(l=>{ hoursByDay[l.date] = (hoursByDay[l.date]||0) + Number(l.hours||0); });
+  const days = 84;
+  const today = toDate(todayStr());
+  let html = '<div class="heatmap-grid">';
+  for(let i=days-1;i>=0;i--){
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const hrs = hoursByDay[key] || 0;
+    let color = "#12192C";
+    if(hrs > 0 && hrs < 1) color = "#1C5C8A";
+    else if(hrs >= 1 && hrs < 2.5) color = "#2A85C0";
+    else if(hrs >= 2.5) color = "#3FA9F5";
+    html += `<div class="heatmap-cell" style="background:${color}" title="${key}: ${hrs}h"></div>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderBossChart(){
+  const el = document.getElementById("chart-boss");
+  const logs = [...state.bossLogs].sort((a,b)=> a.date.localeCompare(b.date));
+  if(logs.length===0){ el.innerHTML = '<div class="empty mono">// no boss battles logged yet</div>'; return; }
+  const w = 480, h = 200, pad = 34;
+  const points = logs.map(l=> ({ date:l.date, pct: Math.round((Number(l.score)/Number(l.total))*100) }));
+  const xStep = (w-pad*2)/Math.max(points.length-1,1);
+  const coords = points.map((p,i)=>{ const x = pad+i*xStep; const y = h-pad-(p.pct/100)*(h-pad*2); return {x,y,...p}; });
+  const pathD = coords.map((c,i)=> (i===0?"M":"L")+c.x.toFixed(1)+","+c.y.toFixed(1)).join(" ");
+  let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#1E3A5F"/>`;
+  svg += `<path d="${pathD}" fill="none" stroke="#FFB020" stroke-width="2.5"/>`;
+  coords.forEach(c=>{ svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3.5" fill="#DCE8F7" stroke="#FFB020" stroke-width="1.5"/>`; });
+  svg += `<text x="${pad}" y="16" font-size="11" fill="#5F7690" font-family="Share Tech Mono, monospace">SCORE %</text></svg>`;
+  el.innerHTML = svg;
+}
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+"…" : s; }
+
+// ---------- Weekly targets ----------
+function renderGoals(){
+  const el = document.getElementById("goal-list");
+  el.innerHTML = "";
+  const cutoff = new Date(toDate(todayStr())); cutoff.setDate(cutoff.getDate()-6);
+  Object.keys(SYLLABUS).forEach(subject=>{
+    const actual = state.logs.filter(l=> l.subject===subject && toDate(l.date) >= cutoff).reduce((a,l)=>a+Number(l.hours||0),0);
+    const goal = state.weeklyGoals[subject] || 0;
+    const pct = goal>0 ? Math.min(100, Math.round((actual/goal)*100)) : 0;
+    const row = document.createElement("div");
+    row.className = "goal-row";
+    row.innerHTML = `
+      <div class="name" style="font-size:0.86rem;">${subject}</div>
+      <input type="number" min="0" step="0.5" value="${goal||''}" placeholder="Goal h" data-subject="${subject}">
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="goal-actual">${actual}h / ${goal||'–'}h</div>
+    `;
+    row.querySelector("input").addEventListener("change", ev=>{
+      const v = parseFloat(ev.target.value) || 0;
+      state.weeklyGoals[subject] = v;
+      saveState();
+      renderGoals();
+    });
+    el.appendChild(row);
+  });
+}
+
+// ---------- Log form & list ----------
+function populateSubjectSelect(){
+  document.getElementById("le-subject").innerHTML = Object.keys(SYLLABUS).map(s=>`<option value="${s}">${s}</option>`).join("");
+}
+document.getElementById("log-form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const entry = {
+    date: document.getElementById("le-date").value,
+    subject: document.getElementById("le-subject").value,
+    hours: document.getElementById("le-hours").value,
+    topics: document.getElementById("le-topics").value,
+    notes: document.getElementById("le-notes").value
+  };
+  if(!entry.date || !entry.hours){ return; }
+  state.logs.push(entry);
+  saveState();
+  e.target.reset();
+  document.getElementById("le-date").value = todayStr();
+  render();
+});
+function renderLogList(){
+  const el = document.getElementById("log-list");
+  if(state.logs.length===0){ el.innerHTML = '<div class="empty mono">// quest log empty — complete your first quest above</div>'; return; }
+  const sorted = [...state.logs].sort((a,b)=> b.date.localeCompare(a.date));
+  el.innerHTML = sorted.map(l=>`
+    <div class="log-entry">
+      <div class="le-main">
+        <div><strong>${l.subject}</strong></div>
+        <div class="le-date">${l.date}${l.topics?" — "+escapeHtml(l.topics):""}</div>
+        ${l.notes?`<div style="color:#5F7690; font-size:0.85rem; margin-top:3px;">${escapeHtml(l.notes)}</div>`:""}
+      </div>
+      <div class="le-hours">+${l.hours}h</div>
+    </div>
+  `).join("");
+}
+function escapeHtml(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+// ---------- Boss quests ----------
+document.getElementById("boss-form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const entry = {
+    date: document.getElementById("bq-date").value,
+    name: document.getElementById("bq-name").value || "Mock Test",
+    score: document.getElementById("bq-score").value,
+    total: document.getElementById("bq-total").value,
+    notes: document.getElementById("bq-notes").value
+  };
+  if(!entry.date || entry.score===""||entry.total===""){ return; }
+  state.bossLogs.push(entry);
+  saveState();
+  e.target.reset();
+  document.getElementById("bq-date").value = todayStr();
+  document.getElementById("bq-total").value = 100;
+  render();
+});
+function renderBossList(){
+  const el = document.getElementById("boss-list");
+  if(state.bossLogs.length===0){ el.innerHTML = '<div class="empty mono">// no boss battles fought yet</div>'; return; }
+  const sorted = [...state.bossLogs].sort((a,b)=> b.date.localeCompare(a.date));
+  el.innerHTML = sorted.map(l=>{
+    const pct = Math.round((Number(l.score)/Number(l.total))*100);
+    const cleared = pct >= 50;
+    return `
+    <div class="log-entry">
+      <div class="le-main">
+        <div><strong>${escapeHtml(l.name)}</strong> <span class="mono" style="font-size:0.72rem; color:${cleared?'var(--done)':'var(--weak)'}; border:1px solid ${cleared?'var(--done)':'var(--weak)'}; padding:0 5px; margin-left:6px;">${cleared?'CLEARED':'RETRY'}</span></div>
+        <div class="le-date">${l.date} — ${l.score}/${l.total}</div>
+        ${l.notes?`<div style="color:#5F7690; font-size:0.85rem; margin-top:3px;">${escapeHtml(l.notes)}</div>`:""}
+      </div>
+      <div class="le-hours">${pct}%</div>
+    </div>`;
+  }).join("");
+}
+
+// ---------- Reset / Export / Import ----------
+document.getElementById("reset-btn").addEventListener("click", ()=>{
+  if(confirm("Reset ALL data — skill tree, logs, EXP, boss battles, goals? Consider exporting a backup first. This cannot be undone.")){
+    try{ localStorage.removeItem(LOCAL_KEY); }catch(e){}
+    state = normalizeState(null);
+    state.lastSeenLevel = computeLevel();
+    saveState();
+    render();
+  }
+});
+function exportData(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "gate_es_hunter_backup_"+todayStr()+".json";
+  a.click();
+}
+document.getElementById("export-btn").addEventListener("click", exportData);
+document.getElementById("settings-export-btn").addEventListener("click", exportData);
+document.getElementById("import-input").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(reader.result);
+      state = normalizeState(parsed);
+      saveState();
+      render();
+      alert("Backup imported successfully.");
+    }catch(err){ alert("Import failed — invalid backup file."); }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+// ---------- Settings modal ----------
+document.getElementById("settings-btn").addEventListener("click", ()=>{
+  document.getElementById("sound-toggle").classList.toggle("on", state.settings.sound);
+  document.getElementById("settings-overlay").classList.add("open");
+});
+document.getElementById("settings-close-btn").addEventListener("click", ()=> document.getElementById("settings-overlay").classList.remove("open"));
+document.getElementById("sound-toggle").addEventListener("click", (e)=>{
+  state.settings.sound = !state.settings.sound;
+  e.currentTarget.classList.toggle("on", state.settings.sound);
+  saveState();
+});
+
+// ---------- Sudden Quest system ----------
+let sqCurrent = null;
+let sqLastTrigger = 0;
+function playSuddenQuestCue(){
+  if(!state.settings.sound) return;
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type = "square"; osc.frequency.value = 740;
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.4);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime+0.4);
+  }catch(e){}
+  if(navigator.vibrate) navigator.vibrate([80,40,80]);
+}
+function pickQuestion(){
+  const weakLow = Object.keys(SYLLABUS).filter(s => subjectPct(s) < 50 && QUESTION_BANK.some(q=>q.subject===s));
+  let pool = (weakLow.length && Math.random() < 0.7) ? QUESTION_BANK.filter(q => weakLow.includes(q.subject)) : QUESTION_BANK;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function triggerSuddenQuest(){
+  sqCurrent = pickQuestion();
+  sqLastTrigger = Date.now();
+  playSuddenQuestCue();
+  const box = document.getElementById("sq-box");
+  box.innerHTML = `
+    <div class="sq-alert mono">!! A SUDDEN QUEST HAS APPEARED !!</div>
+    <div class="sq-title">Sudden Quest</div>
+    <div class="sq-sub">Answer correctly to earn EXP. Declining forfeits the reward.</div>
+    <div class="sq-tag mono">${sqCurrent.subject}</div>
+    <div class="sq-question">${sqCurrent.q}</div>
+    <div id="sq-options"></div>
+    <div id="sq-result"></div>
+  `;
+  const optWrap = box.querySelector("#sq-options");
+  sqCurrent.options.forEach((opt,idx)=>{
+    const b = document.createElement("button");
+    b.className = "sq-option"; b.textContent = opt;
+    b.addEventListener("click", ()=> answerSuddenQuest(idx, optWrap));
+    optWrap.appendChild(b);
+  });
+  document.getElementById("sq-overlay").classList.add("open");
+}
+function answerSuddenQuest(idx, optWrap){
+  const correct = idx === sqCurrent.correct;
+  const reward = correct ? 20 : 0;
+  optWrap.querySelectorAll(".sq-option").forEach((b,i)=>{
+    b.disabled = true;
+    if(i === sqCurrent.correct) b.classList.add("correct");
+    else if(i === idx) b.classList.add("incorrect");
+  });
+  state.exp += reward;
+  state.suddenLog.push({ date: todayStr(), subject:sqCurrent.subject, correct, reward });
+  saveState();
+  document.getElementById("sq-result").innerHTML = `
+    <div class="sq-result-banner ${correct?'win':'lose'} mono">${correct ? `QUEST CLEAR — +${reward} EXP` : `QUEST FAILED — 0 EXP`}</div>
+    <button class="sq-close" id="sq-close-btn">ACKNOWLEDGE</button>
+  `;
+  document.getElementById("sq-close-btn").addEventListener("click", ()=>{
+    document.getElementById("sq-overlay").classList.remove("open");
+    render();
+  });
+}
+document.getElementById("sq-trigger-btn").addEventListener("click", triggerSuddenQuest);
+setInterval(()=>{
+  const overlayOpen = document.getElementById("sq-overlay").classList.contains("open");
+  const cooldownOk = Date.now() - sqLastTrigger > 5*60*1000;
+  if(!overlayOpen && cooldownOk && Math.random() < 0.15) triggerSuddenQuest();
+}, 60*1000);
+
+function renderSuddenQuestList(){
+  const el = document.getElementById("sq-list");
+  if(state.suddenLog.length===0){ el.innerHTML = '<div class="empty mono">// no sudden quests encountered yet</div>'; return; }
+  const sorted = [...state.suddenLog].slice(-8).reverse();
+  el.innerHTML = sorted.map(s=>`
+    <div class="sq-entry">
+      <div>${s.subject} <span style="color:var(--muted); font-size:0.78rem;">— ${s.date}</span></div>
+      <div class="sq-result ${s.correct?'win':'lose'}">${s.correct? '+'+s.reward+' EXP' : 'FAILED'}</div>
+    </div>
+  `).join("");
+}
+
+// ---------- Level-up toast ----------
+function showLevelUpToast(level){
+  const toast = document.getElementById("level-toast");
+  document.getElementById("lt-level-text").textContent = "Lv."+level;
+  toast.classList.add("show");
+  setTimeout(()=> toast.classList.remove("show"), 4000);
+}
+
+// ---------- Stats ----------
+function renderStats(){
+  document.getElementById("stat-overall").textContent = overallPct()+"%";
+  const th = totalHours();
+  document.getElementById("stat-hours").textContent = th % 1 === 0 ? th : th.toFixed(1);
+  document.getElementById("stat-exp").textContent = state.exp;
+  document.getElementById("stat-title").textContent = titleFor(overallPct());
+
+  const { streak, atRisk } = computeStreak();
+  document.getElementById("stat-streak").textContent = streak;
+  const warnEl = document.getElementById("streak-warning");
+  if(atRisk){ warnEl.style.display = "block"; warnEl.textContent = "⚠ Log today's quest to keep your "+streak+"-day streak alive!"; }
+  else warnEl.style.display = "none";
+
+  const level = computeLevel();
+  document.getElementById("stat-level").textContent = "Lv."+level;
+  if(state.lastSeenLevel !== null && level > state.lastSeenLevel){
+    showLevelUpToast(level);
+  }
+  if(state.lastSeenLevel !== level){ state.lastSeenLevel = level; saveState(); }
+}
+
+function render(){
+  renderStats();
+  renderSubjectBars();
+  renderLineChart();
+  renderBarChart();
+  renderTimeChart();
+  renderHeatmap();
+  renderRevisionList();
+  renderSyllabus();
+  renderLogList();
+  renderGoals();
+  renderSuddenQuestList();
+  renderBossChart();
+  renderBossList();
+}
+
+initApp();
+</script>
+</body>
+</html>

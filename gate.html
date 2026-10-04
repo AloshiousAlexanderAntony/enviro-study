@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GATE ES 2027</title>
+<style>
+:root{--bg:#08141a;--panel:#0e1f27;--line:#1e3844;--text:#d8e8ec;--muted:#86a2ab;--cy:#4cc9f0;--am:#ffb454;--sans:system-ui,-apple-system,'Segoe UI',sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55}
+main{max-width:960px;margin:0 auto;padding:22px 16px 48px}
+h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.02em}h2{font-size:1.15rem;margin:30px 0 10px}
+.sub{color:var(--muted);margin:0 0 18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.facts b{display:block;font-family:var(--mono);color:var(--cy);font-size:1.05rem}.facts span{color:var(--muted);font-size:.85rem}
+.note{border-left:3px solid var(--am);padding:8px 12px;margin:12px 0;color:var(--muted);font-size:.9rem;background:var(--panel)}
+a{color:var(--cy)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px}
+summary{cursor:pointer;padding:13px 16px;font-weight:600;list-style:none}summary::-webkit-details-marker{display:none}
+summary:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.in{padding:0 16px 14px;border-top:1px solid var(--line)}.in h3{font-size:.88rem;color:var(--cy);margin:12px 0 4px}
+.in p,.in li{font-size:.92rem;margin:3px 0}.in ul{margin:0;padding-left:18px}
+.ph{display:grid;gap:10px}.ph .panel b{color:var(--am)}
+.ph p{margin:4px 0 0;font-size:.92rem}
+li{margin:4px 0}ul.t{padding-left:18px}
+</style></head><body><main>
+<h1>GATE ES 2027</h1>
+<p class="sub">Official syllabus map, recommended materials and a study plan.</p>
+
+<div class="facts">
+ <div class="panel"><b>6, 7, 13, 14, 20, 21 Feb 2027</b><span>Exam days (computer-based test), organised by IIT Madras</span></div>
+ <div class="panel"><b>65 questions, 100 marks</b><span>3 hours. 15 marks General Aptitude, 85 marks subject</span></div>
+ <div class="panel"><b>14 to 21 Oct 2026</b><span>Application rectification window in the published schedule</span></div>
+</div>
+<div class="note">Dates come from published schedules and can change. Confirm everything on the official site, gate2027.iitm.ac.in, which also hosts the syllabus PDF and previous papers. MCQs carry negative marking; MSQ and NAT do not.</div>
+
+<h2>Syllabus by section, with materials</h2>
+<div id="secs"></div>
+
+<h2>Free resources</h2>
+<ul class="t">
+ <li>Official GATE site: syllabus, brochure, previous year papers and the mock test interface.</li>
+ <li>NPTEL and SWAYAM: IIT lecture courses on water and wastewater engineering, air pollution, hydrology and fluid mechanics.</li>
+ <li>CPCB (cpcb.nic.in): air and water standards, AQI, noise limits, waste rules and reports.</li>
+ <li>India Code (indiacode.nic.in): text of the Water Act, Air Act and Environment (Protection) Act 1986.</li>
+</ul>
+
+<h2>Study plan to February 2027</h2>
+<div class="ph">
+ <div class="panel"><b>Phase 1: build the base (now to mid Nov)</b><p>Cover Sections 1, 4, 5 and 2 first because they are calculation heavy. One topic at a time: read, make a one-page formula sheet, then solve 15 to 20 questions on it.</p></div>
+ <div class="panel"><b>Phase 2: finish the syllabus (mid Nov to Dec)</b><p>Sections 3, 6, 7, 8 and 9. Many are conceptual, so use short notes and quick revision. Start topic-wise previous year questions in parallel.</p></div>
+ <div class="panel"><b>Phase 3: mock tests (January)</b><p>Two full mocks a week in a 3-hour sitting. Spend as long analysing a mock as taking it. Keep an error log of every wrong or guessed question and its cause.</p></div>
+ <div class="panel"><b>Phase 4: final two weeks</b><p>No new topics. Revise formula sheets and the error log, redo weak-section questions, and rehearse exam-day timing and the calculator-free mindset.</p></div>
+</div>
+
+<h2>Habits that raise scores</h2>
+<ul class="t">
+ <li>Solve previous papers by topic first, then as full timed papers. Question styles repeat more than topics do.</li>
+ <li>Attempt easy questions in the first pass, mark doubtful ones, and return. Avoid guessing MCQs you cannot narrow down, since wrong answers cost marks.</li>
+ <li>Keep a single formula notebook per section and revise it weekly.</li>
+ <li>Log study hours and mock scores in the Tracker tab, and review the trend every Sunday.</li>
+ <li>Sleep and a fixed daily slot matter more than occasional long marathons.</li>
+</ul>
+
+<script>
+const S=[
+["1. Mathematics Foundation","Linear algebra (matrices, eigenvalues); calculus, Taylor series and first-order ODEs; numerical methods (roots, interpolation, Simpson, ODE solvers); probability, regression and hypothesis tests.",["B.S. Grewal, Higher Engineering Mathematics","Montgomery and Runger, Applied Statistics and Probability for Engineers","S.S. Sastry, Introductory Methods of Numerical Analysis"]],
+["2. Environmental Chemistry","Equilibria, kinetics, water chemistry (buffers, carbonate system, redox), soil chemistry (CEC, SAR), atmospheric chemistry and ozone formation.",["Sawyer, McCarty and Parkin, Chemistry for Environmental Engineering and Science","Manahan, Environmental Chemistry"]],
+["3. Environmental Microbiology","Microbial groups and roles, cell structure, metabolism and enzyme kinetics, growth and Monod model, pathogens, indicator organisms, MPN and membrane filtration.",["Madigan et al., Brock Biology of Microorganisms","Pelczar, Chan and Krieg, Microbiology","Rittmann and McCarty, Environmental Biotechnology"]],
+["4. Water Resources and Environmental Hydraulics","Hydrologic cycle, hydrographs, groundwater and Darcy law, well hydraulics, fluid properties, pipe flow, channel hydraulics, specific energy and hydraulic jump.",["K. Subramanya, Engineering Hydrology","K. Subramanya, Flow in Open Channels","Modi and Seth, Hydraulics and Fluid Mechanics","H.M. Raghunath, Groundwater"]],
+["5. Water and Wastewater Treatment","Quality parameters, oxygen sag curve, treatment units, distribution, sewer design, sludge handling, CETP and zero liquid discharge, reactor design (batch, CSTR, PFR).",["Metcalf and Eddy, Wastewater Engineering","S.K. Garg, Environmental Engineering Vol. 1 and 2","Peavy, Rowe and Tchobanoglous, Environmental Engineering","Levenspiel, Chemical Reaction Engineering (reactor basics)"]],
+["6. Air and Noise Pollution","Pollutants and standards, particulate control (settling chamber, cyclone, scrubber, baghouse, ESP), gaseous control, stability, Gaussian plume, noise metrics (Leq, Ldn).",["C.S. Rao, Environmental Pollution Control Engineering","de Nevers, Air Pollution Control Engineering","Cooper and Alley, Air Pollution Control"]],
+["7. Solid and Hazardous Waste","Waste hierarchy, municipal waste processing and landfilling, waste to energy, hazardous, biomedical, plastic, C&D and e-waste, circular economy.",["Tchobanoglous, Theisen and Vigil, Integrated Solid Waste Management","Current Solid Waste Management Rules and CPCB guidelines"]],
+["8. Global and Regional Issues","Greenhouse gases, radiative forcing, GWP, climate change, urban heat islands, acid rain, ozone hole, ecology and biodiversity.",["Odum, Fundamentals of Ecology","Enger and Smith, Environmental Science","IPCC assessment report summaries for policymakers"]],
+["9. Environmental Management and Sustainable Development","ISO 14000, auditing, EIA, life cycle assessment, health risk assessment, environmental law, energy and environment, SDGs, carbon pricing, ESG.",["EIA Notification 2006 and the Acts on India Code","Rau and Wooten, Environmental Impact Analysis Handbook","UN SDG documents"]]
+];
+document.getElementById('secs').innerHTML=S.map(s=>`<details><summary>${s[0]}</summary><div class="in"><h3>What to study</h3><p>${s[1]}</p><h3>Suggested materials</h3><ul>${s[2].map(b=>`<li>${b}</li>`).join('')}</ul></div></details>`).join('');
+</script>
+</main></body></html>

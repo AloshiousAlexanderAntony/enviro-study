@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enviro Study Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08141a;--panel:#0e1f27;--line:#1e3844;--text:#d8e8ec;--muted:#86a2ab;--cy:#4cc9f0;--am:#ffb454;
+--sans:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;
+background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,transparent,var(--bg) 70%);pointer-events:none;z-index:0}
+main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:clamp(1.8rem,5vw,2.8rem);margin:0 0 6px;letter-spacing:-.02em;line-height:1.1}
+.sub{color:var(--muted);margin:0 0 24px;max-width:60ch}
+.top{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:22px}
+@media(min-width:760px){.top{grid-template-columns:1.4fr 1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.meter{height:14px;background:#06101400;border:1px solid var(--line);border-radius:3px;overflow:hidden;
+background-image:repeating-linear-gradient(90deg,transparent 0 9px,var(--bg) 9px 11px)}
+.meter>i{display:block;height:100%;width:0;background:var(--cy);transition:width .4s}
+.big{font-family:var(--mono);font-size:2.2rem;font-weight:500;margin:0 0 8px}
+.big small{font-size:.9rem;color:var(--muted)}
+.timer{font-family:var(--mono);font-size:2.4rem;margin:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,input{font:inherit;color:inherit}
+button{background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--cy)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+button.on{background:var(--cy);color:#06222c;border-color:var(--cy);font-weight:600}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.tools input{flex:1 1 220px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
+.card[data-done="1"]{border-color:var(--am)}
+summary{list-style:none;cursor:pointer;padding:16px}
+summary::-webkit-details-marker{display:none}
+.card h2{font-size:1.05rem;margin:0 0 4px}
+.tag{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.pct{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+.body{padding:0 16px 16px;border-top:1px solid var(--line)}
+.body h3{font-size:.9rem;margin:14px 0 6px;color:var(--cy)}
+.f{font-family:var(--mono);font-size:.82rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:0 0 6px;overflow-x:auto;white-space:nowrap}
+ul{list-style:none;padding:0;margin:0}
+li label{display:flex;gap:10px;align-items:flex-start;padding:5px 0;cursor:pointer;font-size:.92rem}
+li input{accent-color:var(--cy);margin-top:5px}
+li input:checked+span{color:var(--muted);text-decoration:line-through}
+.empty{color:var(--muted);padding:24px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+footer{margin-top:30px;color:var(--muted);font-size:.85rem}
+@media(prefers-reduced-motion:reduce){.meter>i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Enviro Study Board</h1>
+<p class="sub">Quick-review notes and a topic checklist for Environmental Engineering. Tick topics as you revise them. Your progress stays in your own browser.</p>
+
+<section class="top">
+  <div class="panel">
+    <p class="big"><span id="pct">0%</span> <small id="count">0 of 0 topics revised</small></p>
+    <div class="meter" role="progressbar" aria-label="Overall revision progress" id="bar"><i id="fill"></i></div>
+  </div>
+  <div class="panel">
+    <p class="timer" id="clock">25:00</p>
+    <div class="row" style="margin-top:8px">
+      <button id="go">Start focus</button>
+      <button id="rst">Reset</button>
+      <button id="mode" aria-live="polite">Focus 25 / Break 5</button>
+    </div>
+  </div>
+</section>
+
+<div class="tools">
+  <input id="q" type="search" placeholder="Search subjects, formulas, topics" aria-label="Search">
+  <button id="hide">Hide finished</button>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty" id="none" hidden>Nothing matches that search. Try a shorter word like "BOD" or "flow".</div>
+<footer>Notes are short revision aids. Check your syllabus and textbooks for full derivations and units.</footer>
+</main>
+
+<script>
+const SUBJECTS=[
+{id:'hyd',name:'Environmental Hydraulics',tag:'Flow in pipes and channels',
+ f:['Continuity: Q = A·V','Manning: V = (1/n)·R^(2/3)·S^(1/2)','Reynolds: Re = ρVD/μ (laminar below about 2000 in pipes)','Froude: Fr = V/√(gD); Fr<1 subcritical, Fr>1 supercritical','Darcy-Weisbach: hf = f·L·V²/(2gD)'],
+ t:['Continuity and Bernoulli equation','Pipe flow and head losses','Open channel flow and Manning equation','Specific energy and hydraulic jump','Pumps and system curves']},
+{id:'wr',name:'Water Resources',tag:'Hydrology and groundwater',
+ f:['Rational method: Q = C·i·A / 360 (A in ha, i in mm/h, Q in m³/s)','Darcy law: v = K·i','Water balance: P = R + E + ΔS'],
+ t:['Hydrologic cycle and precipitation','Infiltration and runoff','Hydrograph and unit hydrograph','Flood routing basics','Aquifers and well hydraulics']},
+{id:'ac',name:'Environmental Chemistry',tag:'Water quality parameters',
+ f:['BOD exerted: BODt = L0·(1 − e^(−k·t))','COD is at least BOD for the same sample','Hardness is expressed as mg/L of CaCO₃','pH = −log₁₀[H⁺]'],
+ t:['DO, BOD and COD','Alkalinity and hardness','Chemical equilibria and pH','Solubility and Henry law','Water and wastewater treatment chemistry']},
+{id:'air',name:'Air Pollution',tag:'Sources, dispersion, control',
+ f:['Dry adiabatic lapse rate is about 9.8 °C/km','Stable atmosphere: environmental lapse rate below the adiabatic rate','Gaussian plume models dispersion from a point source'],
+ t:['Pollutants, sources and standards','Meteorology, lapse rates and inversions','Plume behaviour and dispersion modelling','Control devices: cyclone, ESP, bag filter, scrubber','Effects of smog, acid rain and ozone depletion']},
+{id:'sw',name:'Solid Waste Management',tag:'From collection to landfill',
+ f:['Composting works best at a C:N ratio of about 25–30 : 1','Waste hierarchy: reduce, reuse, recycle, recover, dispose'],
+ t:['Characteristics and generation of waste','Collection, transfer and transport','Composting and biomethanation','Incineration and energy recovery','Sanitary landfill design and leachate']},
+{id:'mic',name:'Environmental Microbiology',tag:'Microbes in treatment systems',
+ f:['Monod growth: μ = μmax·S / (Ks + S)','Aerobic and anaerobic pathways differ in energy yield'],
+ t:['Microbial groups and growth curve','Metabolism and enzyme basics','Biological treatment processes','Indicator organisms and pathogens']},
+{id:'eia',name:'EIA and Environmental Management',tag:'Process and policy',
+ f:['Stages: screening, scoping, baseline, prediction, mitigation, public hearing, EMP, decision, monitoring'],
+ t:['EIA stages and methods','EIA Notification 2006 and project categories','Environmental audit and ISO 14001','Environmental laws and acts in India','Sustainable development and life cycle assessment']},
+{id:'ins',name:'Instrumentation and Sensors',tag:'Measuring the environment',
+ f:['Sensor detects a quantity; a transducer converts it to another form (often electrical)','Thermocouple works on the Seebeck effect'],
+ t:['Accuracy, precision and calibration','Temperature, pressure and flow sensors','Gas and water quality analyzers','Signal conditioning and data logging']},
+{id:'mat',name:'Engineering Mathematics',tag:'Core GATE-style topics',
+ f:['Bayes: P(A|B) = P(B|A)·P(A) / P(B)','Eigenvalues solve det(A − λI) = 0'],
+ t:['Linear algebra','Calculus and series','Differential equations','Probability and statistics','Numerical methods']}
+];
+const KEY='envi-board-v1';
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+const $=s=>document.querySelector(s);
+const grid=$('#grid');
+let hideDone=false,openIds=new Set();
+
+function stats(s){const d=s.t.filter((_,i)=>state[s.id+':'+i]).length;return{d,n:s.t.length}}
+function render(){
+  const q=$('#q').value.trim().toLowerCase();
+  let total=0,done=0,shown=0;grid.innerHTML='';
+  SUBJECTS.forEach(s=>{
+    const {d,n}=stats(s);total+=n;done+=d;
+    const hay=(s.name+' '+s.tag+' '+s.f.join(' ')+' '+s.t.join(' ')).toLowerCase();
+    if(q&&!hay.includes(q))return;
+    if(hideDone&&d===n)return;
+    shown++;
+    const el=document.createElement('details');el.className='card';el.dataset.done=d===n?1:0;
+    if(openIds.has(s.id)||q)el.open=true;
+    el.addEventListener('toggle',()=>{el.open?openIds.add(s.id):openIds.delete(s.id)});
+    const p=Math.round(d/n*100);
+    el.innerHTML=`<summary><h2>${s.name}</h2><p class="tag">${s.tag}</p>
+      <div class="meter"><i style="width:${p}%"></i></div>
+      <div class="pct"><span>${d}/${n} revised</span><span>${p}%</span></div></summary>
+      <div class="body"><h3>Key formulas and facts</h3>${s.f.map(x=>`<p class="f">${x}</p>`).join('')}
+      <h3>Topics to revise</h3><ul>${s.t.map((x,i)=>`<li><label><input type="checkbox" data-k="${s.id}:${i}" ${state[s.id+':'+i]?'checked':''}><span>${x}</span></label></li>`).join('')}</ul></div>`;
+    grid.appendChild(el);
+  });
+  $('#none').hidden=shown>0;
+  const P=total?Math.round(done/total*100):0;
+  $('#pct').textContent=P+'%';$('#count').textContent=done+' of '+total+' topics revised';
+  $('#fill').style.width=P+'%';$('#bar').setAttribute('aria-valuenow',P);
+}
+grid.addEventListener('change',e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  state[k]=e.target.checked;save();
+  const id=k.split(':')[0];openIds.add(id);render();
+});
+$('#q').addEventListener('input',render);
+$('#hide').addEventListener('click',e=>{hideDone=!hideDone;e.target.classList.toggle('on',hideDone);render()});
+
+// focus timer
+let focus=true,left=25*60,tick=null;
+function paint(){const m=String(Math.floor(left/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');
+  $('#clock').textContent=m+':'+s;document.title=(tick?m+':'+s+' · ':'')+'Enviro Study Board'}
+function setMode(f){focus=f;left=(f?25:5)*60;$('#mode').textContent=f?'Focus 25 / Break 5':'On break (5 min)';paint()}
+$('#go').addEventListener('click',()=>{
+  if(tick){clearInterval(tick);tick=null;$('#go').textContent='Resume';paint();return}
+  $('#go').textContent='Pause';
+  tick=setInterval(()=>{left--;if(left<=0){setMode(!focus)}paint()},1000);
+});
+$('#rst').addEventListener('click',()=>{clearInterval(tick);tick=null;$('#go').textContent='Start focus';setMode(true)});
+$('#mode').addEventListener('click',()=>setMode(!focus));
+render();
+</script>
+</body>
+</html>

@@ -351,19 +351,18 @@
 
 <script>
 const SYLLABUS = {
-  "Engineering Mathematics": ["Linear Algebra","Calculus","Differential Equations","Probability & Statistics","Numerical Methods"],
-  "Environmental Chemistry": ["Basic Concepts & Water Chemistry","Air & Soil Chemistry","Organic Chemistry Basics","Chemical Kinetics","Instrumental Analysis"],
-  "Environmental Microbiology": ["Microbial Classification","Growth Kinetics","Water/Wastewater Microbiology","Pathogens & Indicator Organisms","Biodegradation"],
-  "Water Supply Engineering": ["Water Demand & Sources","Water Quality Parameters & Standards","Intake & Conveyance","Treatment Unit Processes","Distribution Systems"],
-  "Wastewater Engineering": ["Sewage Characteristics","Sewer Design & Hydraulics","Primary & Secondary Treatment","Activated Sludge & Trickling Filters","Sludge Treatment & Disposal"],
-  "Air Pollution": ["Sources & Classification of Pollutants","Air Quality Standards & Monitoring","Meteorology & Dispersion Modeling","Control Equipment (ESP, Scrubbers, Baghouse)","Indoor Air Quality"],
-  "Solid & Hazardous Waste Management": ["Waste Generation & Characterization","Collection & Transport","Treatment Technologies","Landfill Design","Hazardous Waste Handling"],
-  "Noise Pollution": ["Noise Fundamentals & Metrics","Standards & Regulations","Sources & Measurement","Control Methods"],
-  "Environmental Impact Assessment": ["EIA Process & Methodology","Environmental Management Plans","Legislation (EPA, Forest, Wildlife Acts)","Public Hearing & Clearance Process"],
-  "Ecology & Biodiversity": ["Ecosystem Structure & Function","Biogeochemical Cycles","Biodiversity & Conservation","Environmental Impact on Ecosystems"],
-  "Environmental Hydraulics & Water Resources": ["Fluid Properties & Flow in Pipes/Channels","Open Channel Flow","Hydrology (Rainfall-Runoff, Groundwater)","Reservoir & Flood Routing","Irrigation Basics"]
+  "1. Mathematics Foundation": ["Linear Algebra","Calculus & First-order ODEs","Numerical Methods","Probability & Statistics"],
+  "2. Environmental Chemistry": ["Fundamentals & Equilibria","Water Chemistry","Soil Chemistry","Atmospheric Chemistry"],
+  "3. Environmental Microbiology": ["Microorganisms & Cell Biology","Metabolism & Enzyme Kinetics","Growth & Monod Model","Microbiology & Health (MPN, Indicators)"],
+  "4. Water Resources & Environmental Hydraulics": ["Surface Water & Hydrographs","Groundwater & Well Hydraulics","Fluid Mechanics & Pipe Flow","Channel Hydraulics"],
+  "5. Water & Wastewater Treatment": ["Quality, Oxygen Sag & Eutrophication","Water Treatment & Distribution","Sewer Design & Sewage Treatment","Sludge, CETP & ZLD","Reactor Design"],
+  "6. Air & Noise Pollution": ["Pollutants & Standards","Particulate Control","Gaseous Control","Dispersion & Air Quality Management","Noise Pollution"],
+  "7. Solid & Hazardous Waste": ["Municipal Solid Waste","Waste to Energy & Landfill","Hazardous Waste","E-waste, Biomedical, Plastic & C&D Waste"],
+  "8. Global & Regional Issues": ["Climate Change & GWP","Ozone, Acid Rain & Heat Islands","Ecology & Biodiversity"],
+  "9. Environmental Management & Sustainability": ["EMS, ISO 14000 & Auditing","EIA, LCA & Risk Assessment","Environmental Law & Policy","Energy, SDGs & ESG"]
 };
-const WEAK_SUBJECTS = ["Solid & Hazardous Waste Management","Environmental Microbiology","Engineering Mathematics","Environmental Hydraulics & Water Resources"];
+const WEAK_SUBJECTS = ["4. Water Resources & Environmental Hydraulics","1. Mathematics Foundation","7. Solid & Hazardous Waste","3. Environmental Microbiology"];
+
 
 const QUESTION_BANK = [
   { subject:"Engineering Mathematics", q:"The Laplace transform of a unit step function u(t) is:", options:["1/s","s","1/s²","e⁻ˢ"], correct:0 },
